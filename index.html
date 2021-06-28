@@ -145,7 +145,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://chengjhe.github.io/2021/03/11/post-name/">
+    <link itemprop="mainEntityOfPage" href="https://chengjhe.github.io/2021/05/19/SonarLintExtensionInVScode/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -159,7 +159,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/11/post-name/" class="post-title-link" itemprop="url">post_name</a>
+            <a href="/2021/05/19/SonarLintExtensionInVScode/" class="post-title-link" itemprop="url">Setting SonarLint In Visual Studio Code</a>
         </h2>
 
         <div class="post-meta">
@@ -169,15 +169,21 @@
               </span>
               <span class="post-meta-item-text">發表於</span>
 
-              <time title="創建時間：2021-03-11 16:36:53" itemprop="dateCreated datePublished" datetime="2021-03-11T16:36:53+08:00">2021-03-11</time>
+              <time title="創建時間：2021-05-19 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-19T00:00:00+08:00">2021-05-19</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新於</span>
-                <time title="修改時間：2021-05-04 08:52:14" itemprop="dateModified" datetime="2021-05-04T08:52:14+08:00">2021-05-04</time>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
               </span>
+              <span class="post-meta-item-text">分類於</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">技術文件</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/Visual-Studio-Code/" itemprop="url" rel="index"><span itemprop="name">Visual Studio Code</span></a>
+                </span>
+            </span>
 
           
 
@@ -190,7 +196,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="MicrosoftTeams-image.png" alt=""></p>
+          <img src="https://sonarsource.gallerycdn.vsassets.io/extensions/sonarsource/sonarlint-vscode/1.22.0/1620831688015/Microsoft.VisualStudio.Services.Icons.Default" class="" width="100">
+<p>SonarLint能在IDE上面顯示錯誤和安全漏洞，並提供修復指南，以便您進行修復。VS Code中的SonarLint支援JavaScript，TypeScript，Python，Java，HTML和PHP等程式的分析，也可直接與SonarQube同步(需要額外設定)。<br>
+<img src="https://github.com/SonarSource/sonarlint-vscode/raw/HEAD/images/sonarlint-vscode.gif" alt=""><br>
+<img src="https://github.com/SonarSource/sonarlint-vscode/raw/HEAD/images/sonarlint-rule-description.gif" alt=""></p>
+<h1>安裝SonarLint Extension</h1>
+<p><img src="https://i.imgur.com/k5qQMbL.png" alt=""></p>
+<h1>設定 SonarQube Connection</h1>
+<p>在使用者的Settings.json 設定SonarQube，需要輸入serverUrl和token。<br>
+<img src="https://i.imgur.com/CcfIArM.png" alt=""></p>
+<p>Token可以在SonarQube Web底下的Account/Security頁面產生。<br>
+<img src="https://i.imgur.com/EDsnG4B.png" alt=""></p>
+<h1>專案綁定</h1>
+<p>在工作區的Settings.json 設定SonarQube，需要輸入ProjectKey。<br>
+<img src="https://imgur.com/RZPyA8X.png" alt=""></p>
+<p>ProjectKey可以在SonarQube Web底下的Project Information頁面找到它。<br>
+<img src="https://i.imgur.com/9Py2rWR.png" alt=""></p>
 
       
     </div>
@@ -275,6 +296,14 @@
           <span class="site-state-item-count">1</span>
           <span class="site-state-item-name">文章</span>
         </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分類</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">標籤</span>
       </div>
   </nav>
 </div>
