@@ -20,28 +20,36 @@
     var CONFIG = {"hostname":"chengjhe.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="CJ&#39;s Blog">
-<meta property="og:url" content="https://chengjhe.github.io/index.html">
+  <meta name="description" content="Vue 3 的Composition API 提供兩種資料響應方式分別是 ref 和 reactive，其中ref適用於監聽簡單型別的資料、reactive適用於監聽複雜型別的資料(物件、陣列)。 過去我們使用Vuex來管理狀態來幫助我們處裡資料響應的問題，但同時我們也寫了很多很多的action、getter、mutations、state；現在不訪可試試看寫寫簡單的reactive來達成資料響">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue 3 Studies - 用Reactive取代麻煩的Vuex">
+<meta property="og:url" content="https://chengjhe.github.io/2021/08/09/Vue-3-Studies-ReactiveInsteadOfVuex/index.html">
 <meta property="og:site_name" content="CJ&#39;s Blog">
+<meta property="og:description" content="Vue 3 的Composition API 提供兩種資料響應方式分別是 ref 和 reactive，其中ref適用於監聽簡單型別的資料、reactive適用於監聽複雜型別的資料(物件、陣列)。 過去我們使用Vuex來管理狀態來幫助我們處裡資料響應的問題，但同時我們也寫了很多很多的action、getter、mutations、state；現在不訪可試試看寫寫簡單的reactive來達成資料響">
 <meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://cythilya.github.io/assets/vue/2017-05-21-vue-logo.png">
+<meta property="og:image" content="https://imgur.com/N1SW2AJ.png">
+<meta property="article:published_time" content="2021-08-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-08-08T16:00:00.000Z">
 <meta property="article:author" content="CJ">
+<meta property="article:tag" content="Vue">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cythilya.github.io/assets/vue/2017-05-21-vue-logo.png">
 
-<link rel="canonical" href="https://chengjhe.github.io/">
+<link rel="canonical" href="https://chengjhe.github.io/2021/08/09/Vue-3-Studies-ReactiveInsteadOfVuex/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-TW'
   };
 </script>
 
-  <title>CJ's Blog</title>
+  <title>Vue 3 Studies - 用Reactive取代麻煩的Vuex | CJ's Blog</title>
   
 
 
@@ -139,9 +147,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
@@ -157,10 +166,9 @@
       <meta itemprop="name" content="CJ's Blog">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/08/09/Vue-3-Studies-ReactiveInsteadOfVuex/" class="post-title-link" itemprop="url">Vue 3 Studies - 用Reactive取代麻煩的Vuex</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          Vue 3 Studies - 用Reactive取代麻煩的Vuex
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -196,7 +204,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p><img src="https://cythilya.github.io/assets/vue/2017-05-21-vue-logo.png" alt=""></p>
+        <p><img src="https://cythilya.github.io/assets/vue/2017-05-21-vue-logo.png" alt=""></p>
 <p>Vue 3 的Composition API 提供兩種資料響應方式分別是 ref 和 reactive，其中ref適用於監聽簡單型別的資料、reactive適用於監聽複雜型別的資料(物件、陣列)。<br>
 過去我們使用Vuex來管理狀態來幫助我們處裡資料響應的問題，但同時我們也寫了很多很多的action、getter、mutations、state；現在不訪可試試看寫寫簡單的reactive來達成資料響應的功能。</p>
 <h1>範例</h1>
@@ -216,107 +224,33 @@
 <li><a target="_blank" rel="noopener" href="https://composition-api.vuejs.org/">Composition API RFC</a></li>
 </ul>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
+          <div class="post-tags">
+              <a href="/tags/Vue/" rel="tag"># Vue</a>
+          </div>
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-TW">
-    <link itemprop="mainEntityOfPage" href="https://chengjhe.github.io/2021/05/19/SonarLintExtensionInVScode/">
+        
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="CJ">
-      <meta itemprop="description" content="">
-    </span>
 
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="CJ's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/19/SonarLintExtensionInVScode/" class="post-title-link" itemprop="url">Setting SonarLint In Visual Studio Code</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">發表於</span>
-
-              <time title="創建時間：2021-05-19 00:00:00" itemprop="dateCreated datePublished" datetime="2021-05-19T00:00:00+08:00">2021-05-19</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分類於</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">技術文件</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%8A%80%E8%A1%93%E6%96%87%E4%BB%B6/Visual-Studio-Code/" itemprop="url" rel="index"><span itemprop="name">Visual Studio Code</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <img src="https://sonarsource.gallerycdn.vsassets.io/extensions/sonarsource/sonarlint-vscode/1.22.0/1620831688015/Microsoft.VisualStudio.Services.Icons.Default" class="" width="100">
-<p>SonarLint能在IDE上面顯示錯誤和安全漏洞，並提供修復指南，以便您進行修復。VS Code中的SonarLint支援JavaScript，TypeScript，Python，Java，HTML和PHP等程式的分析，也可直接與SonarQube同步(需要額外設定)。<br>
-<img src="https://github.com/SonarSource/sonarlint-vscode/raw/HEAD/images/sonarlint-vscode.gif" alt=""><br>
-<img src="https://github.com/SonarSource/sonarlint-vscode/raw/HEAD/images/sonarlint-rule-description.gif" alt=""></p>
-<h1>安裝SonarLint Extension</h1>
-<p><img src="https://i.imgur.com/k5qQMbL.png" alt=""></p>
-<h1>設定 SonarQube Connection</h1>
-<p>在使用者的Settings.json 設定SonarQube，需要輸入serverUrl和token。<br>
-<img src="https://i.imgur.com/CcfIArM.png" alt=""></p>
-<p>Token可以在SonarQube Web底下的Account/Security頁面產生。<br>
-<img src="https://i.imgur.com/EDsnG4B.png" alt=""></p>
-<h1>專案綁定</h1>
-<p>在工作區的Settings.json 設定SonarQube，需要輸入ProjectKey。<br>
-<img src="https://imgur.com/RZPyA8X.png" alt=""></p>
-<p>ProjectKey可以在SonarQube Web底下的Project Information頁面找到它。<br>
-<img src="https://i.imgur.com/9Py2rWR.png" alt=""></p>
-
-      
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/19/SonarLintExtensionInVScode/" rel="prev" title="Setting SonarLint In Visual Studio Code">
+      <i class="fa fa-chevron-left"></i> Setting SonarLint In Visual Studio Code
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
-  
-
-
   
 
 
@@ -369,6 +303,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">範例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">2.</span> <span class="nav-text">參考資料</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
