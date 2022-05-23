@@ -28,9 +28,9 @@
 <meta property="og:description" content="最近遇到了一個VSTO Excel需求，需要知道Excel Sheet中每筆Row的編輯狀態以及新舊值，但是在VSTO Excel控制項物件(如ListObject、NamedRange)， 它們不支援這個功能，也就是說沒辦法細分編輯的行為(如Add,Modify,Delete,Uncahnge)以及取得舊值。 不過，幸好我們都是以DataTable作為DataSource，所以我們可以使用Da">
 <meta property="og:locale" content="zh_TW">
 <meta property="og:image" content="https://i.imgur.com/NRXpcll.png">
-<meta property="og:image" content="https://i.imgur.com/REtF4EJ.png">
+<meta property="og:image" content="https://i.imgur.com/KKW06Nl.png">
 <meta property="article:published_time" content="2022-05-22T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-05-23T06:35:48.605Z">
+<meta property="article:modified_time" content="2022-05-23T06:50:35.646Z">
 <meta property="article:author" content="CJ">
 <meta property="article:tag" content="CSharp">
 <meta name="twitter:card" content="summary">
@@ -178,7 +178,7 @@
               <span class="post-meta-item-text">發表於</span>
               
 
-              <time title="創建時間：2022-05-23 00:00:00 / 修改時間：14:35:48" itemprop="dateCreated datePublished" datetime="2022-05-23T00:00:00+08:00">2022-05-23</time>
+              <time title="創建時間：2022-05-23 00:00:00 / 修改時間：14:50:35" itemprop="dateCreated datePublished" datetime="2022-05-23T00:00:00+08:00">2022-05-23</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -276,7 +276,7 @@
 <p>接下來的範例，我們將使用DataTable的GetChanges方法與DataRowState、DataRowVersion屬性，來取的Row的變更狀態以及欄位新舊值。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">DataTable dt = <span class="keyword">new</span> DataTable();</span><br><span class="line">dt.Columns.Add(<span class="string">&quot;Name&quot;</span>);</span><br><span class="line">dt.Columns.Add(<span class="string">&quot;Phone&quot;</span>);</span><br><span class="line">dt.Rows.Add(<span class="string">&quot;Andy&quot;</span>, <span class="string">&quot;0919543196&quot;</span>);</span><br><span class="line">dt.Rows.Add(<span class="string">&quot;Jack&quot;</span>, <span class="string">&quot;0972188166&quot;</span>);</span><br><span class="line">dt.Rows.Add(<span class="string">&quot;Lily&quot;</span>, <span class="string">&quot;0977234521&quot;</span>);</span><br><span class="line">dt.AcceptChanges(); <span class="comment">// Commit Data</span></span><br><span class="line"></span><br><span class="line">dt.Rows.Add(<span class="string">&quot;Anny&quot;</span>, <span class="string">&quot;0957234521&quot;</span>); <span class="comment">// 新增</span></span><br><span class="line">dt.Rows[<span class="number">0</span>][<span class="number">0</span>] = <span class="string">&quot;AndyLu&quot;</span>; <span class="comment">// 修改</span></span><br><span class="line">dt.Rows[<span class="number">1</span>].Delete(); <span class="comment">// 刪除</span></span><br><span class="line"></span><br><span class="line">DataTable cdt = dt.GetChanges();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cdt.Rows.Count; i++)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (cdt.Rows[i].RowState == DataRowState.Deleted)</span><br><span class="line">		Console.WriteLine(<span class="string">&quot;刪除的行索引[&#123;0&#125;]，原來數值是&#123;1&#125;&quot;</span>, i, cdt.Rows[i][<span class="number">0</span>, DataRowVersion.Original]);</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (cdt.Rows[i].RowState == DataRowState.Modified)</span><br><span class="line">		Console.WriteLine(<span class="string">&quot;修改的行索引[&#123;0&#125;]，原來數值是&#123;1&#125;，現在的新數值&#123;2&#125;&quot;</span>, i, cdt.Rows[i][<span class="number">0</span>, DataRowVersion.Original], cdt.Rows[i][<span class="number">0</span>, DataRowVersion.Current]);</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (cdt.Rows[i].RowState == DataRowState.Added)</span><br><span class="line">		Console.WriteLine(<span class="string">&quot;新增行索引[&#123;0&#125;]，數值是&#123;1&#125;&quot;</span>, i, cdt.Rows[i][<span class="number">0</span>, DataRowVersion.Current]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="執行結果"># 執行結果</h3>
-<p><img src="https://i.imgur.com/REtF4EJ.png" alt=""><br>
+<p><img src="https://i.imgur.com/KKW06Nl.png" alt=""><br>
 修改的行索引[0]，原來數值是Andy，現在的新數值AndyLu<br>
 刪除的行索引[1]，原來數值是Jack<br>
 新增行索引[2]，數值是Anny</p>
