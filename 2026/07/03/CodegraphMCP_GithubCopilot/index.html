@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chengjhe.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="CodeGraph MCP + GitHub Copilot 完整教學文件  目標：讓 GitHub Copilot Agent 在大型 Repo 中優先使用 CodeGraph MCP 做 codebase understanding，避免一開始就用 read_file &#x2F; grep &#x2F; glob 大量掃描檔案。   1. 適用情境 適合以下工作流：  C# &#x2F; Vue &#x2F; VSTO &#x2F; Ty">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSCode x CodeGraph MCP x Github Copilot 教學">
+<meta property="og:url" content="https://chengjhe.github.io/2026/07/03/CodegraphMCP_GithubCopilot/index.html">
+<meta property="og:site_name" content="CJ&#39;s Blog">
+<meta property="og:description" content="CodeGraph MCP + GitHub Copilot 完整教學文件  目標：讓 GitHub Copilot Agent 在大型 Repo 中優先使用 CodeGraph MCP 做 codebase understanding，避免一開始就用 read_file &#x2F; grep &#x2F; glob 大量掃描檔案。   1. 適用情境 適合以下工作流：  C# &#x2F; Vue &#x2F; VSTO &#x2F; Ty">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://thumbs2.imgbox.com/9b/c1/3FTaX71t_t.png">
+<meta property="article:published_time" content="2026-07-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-03T03:12:49.947Z">
+<meta property="article:author" content="CJ">
+<meta property="article:tag" content="Github Copilot, CodeGraph, MCP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thumbs2.imgbox.com/9b/c1/3FTaX71t_t.png">
+
+
+<link rel="canonical" href="https://chengjhe.github.io/2026/07/03/CodegraphMCP_GithubCopilot/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://chengjhe.github.io/2026/07/03/CodegraphMCP_GithubCopilot/","path":"2026/07/03/CodegraphMCP_GithubCopilot/","title":"VSCode x CodeGraph MCP x Github Copilot 教學"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>VSCode x CodeGraph MCP x Github Copilot 教學 | CJ's Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">CJ's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">CodeGraph MCP + GitHub Copilot 完整教學文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%81%A9%E7%94%A8%E6%83%85%E5%A2%83"><span class="nav-number">1.1.</span> <span class="nav-text">1. 適用情境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.</span> <span class="nav-text">2. 核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%82%B3%E7%B5%B1-Copilot-Agent-%E6%8E%A2%E7%B4%A2%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1 傳統 Copilot Agent 探索模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-CodeGraph-First-%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2 CodeGraph First 模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%89%E8%A3%9D%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">3. 安裝方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%89%8D%E7%BD%AE%E9%9C%80%E6%B1%82"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 前置需求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%BD%BF%E7%94%A8-npm-%E5%AE%89%E8%A3%9D-CodeGraph"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 使用 npm 安裝 CodeGraph</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%8F%A6%E4%B8%80%E7%A8%AE%E5%AE%98%E6%96%B9%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%9D%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 另一種官方快速安裝方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%88%9D%E5%A7%8B%E5%8C%96%E5%B0%88%E6%A1%88%E7%B4%A2%E5%BC%95"><span class="nav-number">1.4.</span> <span class="nav-text">4. 初始化專案索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-GitHub-Copilot-MCP-%E8%A8%AD%E5%AE%9A"><span class="nav-number">1.5.</span> <span class="nav-text">5. GitHub Copilot MCP 設定</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E7%82%BA%E4%BB%80%E9%BA%BC-GitHub-Copilot-%E5%8F%AF%E8%83%BD%E4%B8%8D%E6%9C%83%E5%87%BA%E7%8F%BE%E5%9C%A8-codegraph-install"><span class="nav-number">1.5.1.</span> <span class="nav-text">5.1 為什麼 GitHub Copilot 可能不會出現在 codegraph install</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E5%BB%BA%E7%AB%8B-VS-Code-MCP-%E8%A8%AD%E5%AE%9A"><span class="nav-number">1.5.2.</span> <span class="nav-text">5.2 建立 VS Code MCP 設定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E9%87%8D%E6%96%B0%E5%95%9F%E5%8B%95-VS-Code"><span class="nav-number">1.5.3.</span> <span class="nav-text">5.3 重新啟動 VS Code</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="nav-number">1.6.</span> <span class="nav-text">6. 常用指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%AE%89%E8%A3%9D-%E6%9B%B4%E6%96%B0-%E7%A7%BB%E9%99%A4"><span class="nav-number">1.6.1.</span> <span class="nav-text">6.1 安裝 &#x2F; 更新 &#x2F; 移除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%B0%88%E6%A1%88%E7%B4%A2%E5%BC%95"><span class="nav-number">1.6.2.</span> <span class="nav-text">6.2 專案索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E6%9F%A5-Symbol"><span class="nav-number">1.6.3.</span> <span class="nav-text">6.3 查 Symbol</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E6%9F%A5%E8%AA%B0%E5%91%BC%E5%8F%AB%E5%AE%83%EF%BC%9Acallers"><span class="nav-number">1.6.4.</span> <span class="nav-text">6.4 查誰呼叫它：callers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E6%9F%A5%E5%AE%83%E5%91%BC%E5%8F%AB%E8%AA%B0%EF%BC%9Acallees"><span class="nav-number">1.6.5.</span> <span class="nav-text">6.5 查它呼叫誰：callees</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-6-%E5%88%86%E6%9E%90%E5%BD%B1%E9%9F%BF%E7%AF%84%E5%9C%8D"><span class="nav-number">1.6.6.</span> <span class="nav-text">6.6 分析影響範圍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-7-%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0"><span class="nav-number">1.6.7.</span> <span class="nav-text">6.7 索引更新</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-GitHub-Copilot-Instructions"><span class="nav-number">1.7.</span> <span class="nav-text">7. GitHub Copilot Instructions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E9%A9%97%E8%AD%89-Checklist"><span class="nav-number">1.8.</span> <span class="nav-text">8. 驗證 Checklist</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E5%AE%89%E8%A3%9D%E6%AA%A2%E6%9F%A5"><span class="nav-number">1.8.1.</span> <span class="nav-text">8.1 安裝檢查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E5%B0%88%E6%A1%88%E6%AA%A2%E6%9F%A5"><span class="nav-number">1.8.2.</span> <span class="nav-text">8.2 專案檢查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-3-MCP-%E8%A8%AD%E5%AE%9A%E6%AA%A2%E6%9F%A5"><span class="nav-number">1.8.3.</span> <span class="nav-text">8.3 MCP 設定檢查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E7%96%91%E9%9B%A3%E6%8E%92%E8%A7%A3"><span class="nav-number">1.9.</span> <span class="nav-text">9. 疑難排解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-codegraph-%E4%B8%8D%E6%98%AF%E5%85%A7%E9%83%A8%E6%88%96%E5%A4%96%E9%83%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.9.1.</span> <span class="nav-text">9.1 codegraph 不是內部或外部命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-Copilot-%E6%B2%92%E6%9C%89%E4%BD%BF%E7%94%A8-CodeGraph"><span class="nav-number">1.9.2.</span> <span class="nav-text">9.2 Copilot 沒有使用 CodeGraph</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-3-CodeGraph-%E7%B5%90%E6%9E%9C%E4%B8%8D%E5%AE%8C%E6%95%B4"><span class="nav-number">1.9.3.</span> <span class="nav-text">9.3 CodeGraph 結果不完整</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%BB%BA%E8%AD%B0-Repo-%E7%B5%90%E6%A7%8B"><span class="nav-number">1.10.</span> <span class="nav-text">10. 建議 Repo 結構</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E6%9C%80%E7%B5%82%E5%BB%BA%E8%AD%B0"><span class="nav-number">1.11.</span> <span class="nav-text">11. 最終建議</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#12-%E5%8F%83%E8%80%83%E4%BE%86%E6%BA%90"><span class="nav-number">1.12.</span> <span class="nav-text">12. 參考來源</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">CJ</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分類</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://chengjhe.github.io/2026/07/03/CodegraphMCP_GithubCopilot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="CJ">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="VSCode x CodeGraph MCP x Github Copilot 教學 | CJ's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VSCode x CodeGraph MCP x Github Copilot 教學
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+      
+
+      <time title="創建時間：2026-07-03 00:00:00 / 修改時間：11:12:49" itemprop="dateCreated datePublished" datetime="2026-07-03T00:00:00+08:00">2026-07-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Technical-documents/" itemprop="url" rel="index"><span itemprop="name">Technical documents</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Technical-documents/Github-Copilot/" itemprop="url" rel="index"><span itemprop="name">Github Copilot</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><img src="https://thumbs2.imgbox.com/9b/c1/3FTaX71t_t.png" class="" width="500">
+<h1>CodeGraph MCP + GitHub Copilot 完整教學文件</h1>
+<blockquote>
+<p>目標：讓 GitHub Copilot Agent 在大型 Repo 中優先使用 CodeGraph MCP 做 codebase understanding，避免一開始就用 <code>read_file / grep / glob</code> 大量掃描檔案。</p>
+</blockquote>
+<hr>
+<h2 id="1-適用情境">1. 適用情境</h2>
+<p>適合以下工作流：</p>
+<ul>
+<li>C# / Vue / VSTO / TypeScript 大型專案</li>
+<li>需要找實作位置</li>
+<li>需要查 caller / callee</li>
+<li>需要分析影響範圍</li>
+<li>需要做 minimal change</li>
+<li>希望減少 Copilot Agent 無意義讀檔</li>
+<li>希望避免 AI 透過 raw file scanning 猜測架構</li>
+</ul>
+<p>CodeGraph 官方安裝流程包含：安裝 CLI、設定 Agent、重新啟動 Agent、在每個專案執行 <code>codegraph init</code> 建立 <code>.codegraph/</code> 索引。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<hr>
+<h2 id="2-核心概念">2. 核心概念</h2>
+<h3 id="2-1-傳統-Copilot-Agent-探索模式">2.1 傳統 Copilot Agent 探索模式</h3>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">User Prompt</span><br><span class="line">  ↓</span><br><span class="line">glob / grep / search</span><br><span class="line">  ↓</span><br><span class="line">read_file</span><br><span class="line">  ↓</span><br><span class="line">read_file</span><br><span class="line">  ↓</span><br><span class="line">read_file</span><br><span class="line">  ↓</span><br><span class="line">推測架構與關聯</span><br><span class="line">  ↓</span><br><span class="line">修改程式</span><br></pre></td></tr></table></figure>
+<p>問題：</p>
+<ul>
+<li>容易讀太多檔案</li>
+<li>Token 消耗高</li>
+<li>關聯判斷可能不完整</li>
+<li>容易探索超出需求範圍</li>
+</ul>
+<hr>
+<h3 id="2-2-CodeGraph-First-模式">2.2 CodeGraph First 模式</h3>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">User Prompt</span><br><span class="line">  ↓</span><br><span class="line">CodeGraph MCP</span><br><span class="line">  ↓</span><br><span class="line">Symbol Search</span><br><span class="line">  ↓</span><br><span class="line">Callers / Callees</span><br><span class="line">  ↓</span><br><span class="line">Impact Analysis</span><br><span class="line">  ↓</span><br><span class="line">Read affected files only</span><br><span class="line">  ↓</span><br><span class="line">Minimal change</span><br></pre></td></tr></table></figure>
+<p>CodeGraph 官方文件說明，安裝後仍需要在每個專案執行 <code>codegraph init</code>，此命令會建立本地 <code>.codegraph/</code> 目錄並建置 graph。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<hr>
+<h2 id="3-安裝方式">3. 安裝方式</h2>
+<h3 id="3-1-前置需求">3.1 前置需求</h3>
+<p>先確認 Node.js / npm：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node <span class="literal">-v</span></span><br><span class="line">npm <span class="literal">-v</span></span><br></pre></td></tr></table></figure>
+<p>如果尚未安裝 Node.js，建議安裝 LTS 版。</p>
+<hr>
+<h3 id="3-2-使用-npm-安裝-CodeGraph">3.2 使用 npm 安裝 CodeGraph</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install <span class="literal">-g</span> @colbymchenry/codegraph</span><br></pre></td></tr></table></figure>
+<p>安裝完成後確認版本：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codegraph <span class="literal">--version</span></span><br></pre></td></tr></table></figure>
+<p>npm 全域安裝方式與 <code>codegraph --version</code> 驗證方式可見公開安裝教學。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a>, <a target="_blank" rel="noopener" href="https://blog.csdn.net/G_whang/article/details/161948958">[blog.csdn.net]</a></p>
+<hr>
+<h3 id="3-3-另一種官方快速安裝方式">3.3 另一種官方快速安裝方式</h3>
+<p>官方文件也提供直接執行：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx @colbymchenry/codegraph</span><br></pre></td></tr></table></figure>
+<p>此 installer 會詢問要設定哪些 Agent、是否加入 PATH、以及設定套用到全域或本地專案。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<hr>
+<h2 id="4-初始化專案索引">4. 初始化專案索引</h2>
+<p>進入你的專案根目錄：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> C:\Source\YourProject</span><br></pre></td></tr></table></figure>
+<p>建立 CodeGraph 索引：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">codegraph init</span><br></pre></td></tr></table></figure>
+<p>完成後專案會出現：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.codegraph/</span><br></pre></td></tr></table></figure>
+<p>官方文件說明，一次 global install 可涵蓋所有專案，但每個專案仍需各自執行一次 <code>codegraph init</code>。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<hr>
+<h2 id="5-GitHub-Copilot-MCP-設定">5. GitHub Copilot MCP 設定</h2>
+<h3 id="5-1-為什麼-GitHub-Copilot-可能不會出現在-codegraph-install">5.1 為什麼 GitHub Copilot 可能不會出現在 <code>codegraph install</code></h3>
+<p>目前 CodeGraph installer 會自動偵測的 Agent 包含 Claude Code、Cursor、Codex CLI、opencode、Hermes Agent、Gemini CLI、Antigravity IDE、Kiro。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<p>如果畫面沒有 GitHub Copilot 選項，通常可以改成手動建立 VS Code MCP 設定。</p>
+<hr>
+<h3 id="5-2-建立-VS-Code-MCP-設定">5.2 建立 VS Code MCP 設定</h3>
+<p>在專案建立：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.vscode/mcp.json</span><br></pre></td></tr></table></figure>
+<p>內容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;servers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;codegraph&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stdio&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;codegraph&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;serve&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--mcp&quot;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>這個設定是讓 MCP client 透過 stdio 啟動 <code>codegraph serve --mcp</code>。公開教學中也列出相同方向的 MCP server 設定格式。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a></p>
+<hr>
+<h3 id="5-3-重新啟動-VS-Code">5.3 重新啟動 VS Code</h3>
+<p>設定完成後：</p>
+<ol>
+<li>關閉 VS Code</li>
+<li>重新開啟 VS Code</li>
+<li>開啟該 Workspace</li>
+<li>確認 MCP server 是否被載入</li>
+</ol>
+<p>官方安裝文件也要求在設定 Agent 後重新啟動 Agent，讓 MCP server 載入。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<hr>
+<h2 id="6-常用指令">6. 常用指令</h2>
+<h3 id="6-1-安裝-更新-移除">6.1 安裝 / 更新 / 移除</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安裝</span></span><br><span class="line">npm install <span class="literal">-g</span> @colbymchenry/codegraph</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看版本</span></span><br><span class="line">codegraph <span class="literal">--version</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新</span></span><br><span class="line">codegraph upgrade</span><br><span class="line"></span><br><span class="line"><span class="comment"># 解除 Agent 設定</span></span><br><span class="line">codegraph uninstall</span><br></pre></td></tr></table></figure>
+<p>官方文件說明可用 <code>codegraph uninstall</code> 移除 installer 寫入的 Agent 設定，但專案索引 <code>.codegraph/</code> 不會被刪除；要移除專案索引用 <code>codegraph uninit</code>。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<hr>
+<h3 id="6-2-專案索引">6.2 專案索引</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 建立索引</span></span><br><span class="line">codegraph init</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看狀態</span></span><br><span class="line">codegraph status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除專案索引</span></span><br><span class="line">codegraph uninit</span><br></pre></td></tr></table></figure>
+<p><code>codegraph init</code> 會建立本地 <code>.codegraph/</code> 並建置完整 graph。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></p>
+<hr>
+<h3 id="6-3-查-Symbol">6.3 查 Symbol</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">codegraph query UserService</span><br><span class="line">codegraph query UpdateOrderAsync</span><br><span class="line">codegraph query ShippingPlanService</span><br></pre></td></tr></table></figure>
+<p>公開教學列出 <code>codegraph query &lt;symbol&gt;</code> 作為搜尋 class / function / variable 的指令。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a></p>
+<hr>
+<h3 id="6-4-查誰呼叫它：callers">6.4 查誰呼叫它：callers</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">codegraph callers UpdateOrderAsync</span><br><span class="line">codegraph callers SaveData</span><br><span class="line">codegraph callers ReadApproval</span><br></pre></td></tr></table></figure>
+<p>公開教學列出 <code>codegraph callers &lt;function&gt;</code> 作為查找呼叫方的指令。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a></p>
+<hr>
+<h3 id="6-5-查它呼叫誰：callees">6.5 查它呼叫誰：callees</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">codegraph callees UpdateOrderAsync</span><br><span class="line">codegraph callees SaveData</span><br><span class="line">codegraph callees ReadApproval</span><br></pre></td></tr></table></figure>
+<p>公開教學列出 <code>codegraph callees &lt;function&gt;</code> 作為查找被呼叫方的指令。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a></p>
+<hr>
+<h3 id="6-6-分析影響範圍">6.6 分析影響範圍</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">codegraph impact UpdateOrderAsync</span><br><span class="line">codegraph impact UserService</span><br><span class="line">codegraph impact ReadApproval</span><br></pre></td></tr></table></figure>
+<p>公開教學列出 <code>codegraph impact &lt;symbol&gt;</code> 作為分析修改影響範圍的指令。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a></p>
+<hr>
+<h3 id="6-7-索引更新">6.7 索引更新</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 全量更新</span></span><br><span class="line">codegraph index</span><br><span class="line"></span><br><span class="line"><span class="comment"># 強制重建</span></span><br><span class="line">codegraph index <span class="literal">--force</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 增量更新</span></span><br><span class="line">codegraph index <span class="literal">--incremental</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 監控檔案變更</span></span><br><span class="line">codegraph watch</span><br></pre></td></tr></table></figure>
+<p>公開教學列出 <code>codegraph index</code>、<code>codegraph index --force</code>、<code>codegraph index --incremental</code>、<code>codegraph watch</code> 作為索引更新方式。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a></p>
+<hr>
+<h2 id="7-GitHub-Copilot-Instructions">7. GitHub Copilot Instructions</h2>
+<p>建立：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.github/copilot-instructions.md</span><br></pre></td></tr></table></figure>
+<p>放入以下完整內容。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">codegraph:</span></span><br><span class="line">  <span class="attr">priority:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">use</span> <span class="string">CodeGraph</span> <span class="string">MCP</span> <span class="string">as</span> <span class="string">primary</span> <span class="string">tool</span> <span class="string">for</span> <span class="string">any</span> <span class="string">code-related</span> <span class="string">task</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">prefer</span> <span class="string">it</span> <span class="string">before</span> <span class="string">any</span> <span class="string">repository/file</span> <span class="string">exploration</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">intent:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">avoid</span> <span class="string">read_file/grep/glob-first</span> <span class="string">workflows</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">avoid</span> <span class="string">deriving</span> <span class="string">relationships</span> <span class="string">from</span> <span class="string">raw</span> <span class="string">scanning</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">always</span> <span class="string">narrow</span> <span class="string">scope</span> <span class="string">via</span> <span class="string">CodeGraph</span> <span class="string">MCP</span> <span class="string">first</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">required_when:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">locate</span> <span class="string">implementation</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">understand</span> <span class="string">behavior/architecture</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">plan/implement/review/refactor/debug</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">analyze</span> <span class="string">dependencies/impact</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">find</span> <span class="string">related</span> <span class="string">files/symbols/callers/callees</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">trace</span> <span class="string">data/control</span> <span class="string">flow</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">workflow:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">use</span> <span class="string">CodeGraph</span> <span class="string">MCP</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">identify</span> <span class="string">target</span> <span class="string">symbols</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">identify</span> <span class="string">related</span> <span class="string">symbols</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">identify</span> <span class="string">callers/callees</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">analyze</span> <span class="string">dependencies</span> <span class="string">+</span> <span class="string">impact</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">read</span> <span class="string">only</span> <span class="string">affected</span> <span class="string">files</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">perform</span> <span class="string">minimal</span> <span class="string">change</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">file_access:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">only</span> <span class="string">after</span> <span class="string">MCP</span> <span class="string">scope</span> <span class="string">narrowing</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">only</span> <span class="string">directly</span> <span class="string">affected</span> <span class="string">files</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">minimize</span> <span class="string">reads</span></span><br><span class="line">    <span class="bullet">-</span> <span class="literal">no</span> <span class="string">exploratory</span> <span class="string">or</span> <span class="string">wide</span> <span class="string">scanning</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">forbidden:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">grep/glob/read-first</span> <span class="string">workflows</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">recursive</span> <span class="string">or</span> <span class="string">repo-wide</span> <span class="string">exploration</span> <span class="string">before</span> <span class="string">MCP</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">using</span> <span class="string">file</span> <span class="string">reads</span> <span class="string">to</span> <span class="string">infer</span> <span class="string">architecture/dependencies/call</span> <span class="string">chains/impact</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">reading</span> <span class="string">unrelated</span> <span class="string">files</span> <span class="string">or</span> <span class="string">broad</span> <span class="string">directories</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">fallback:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">use</span> <span class="string">file</span> <span class="string">search</span> <span class="string">only</span> <span class="string">if</span> <span class="string">MCP</span> <span class="string">insufficient</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">keep</span> <span class="string">minimal</span> <span class="string">and</span> <span class="string">scoped</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">explain</span> <span class="string">why</span> <span class="string">fallback</span> <span class="string">is</span> <span class="string">needed</span></span><br><span class="line"></span><br><span class="line"><span class="attr">core:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="literal">no</span> <span class="string">assumptions</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">do</span> <span class="string">only</span> <span class="string">requested</span> <span class="string">task</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">minimal</span> <span class="string">change</span></span><br><span class="line">  <span class="bullet">-</span> <span class="literal">no</span> <span class="string">hidden</span> <span class="string">errors</span></span><br><span class="line">  <span class="bullet">-</span> <span class="literal">no</span> <span class="string">execution/debug/log</span> <span class="string">inspection</span></span><br><span class="line"></span><br><span class="line"><span class="attr">focus:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">identify</span> <span class="string">main</span> <span class="string">problem</span> <span class="string">first</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">ignore</span> <span class="string">non-critical</span> <span class="string">issues</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">prioritize</span> <span class="string">blocking</span> <span class="string">issues</span></span><br><span class="line"></span><br><span class="line"><span class="attr">rules:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">unclear/conflict</span> <span class="string">→</span> <span class="string">ask</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">assumptions</span> <span class="string">→</span> <span class="string">list</span> <span class="string">and</span> <span class="string">wait</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">large</span> <span class="string">task</span> <span class="string">→</span> <span class="string">split</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">failures</span> <span class="string">→</span> <span class="string">report</span> <span class="string">immediately</span></span><br><span class="line">  <span class="bullet">-</span> <span class="literal">no</span> <span class="string">scope</span> <span class="string">expansion</span></span><br><span class="line"></span><br><span class="line"><span class="attr">scope:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">minimal</span> <span class="string">change</span> <span class="string">only</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">preserve</span> <span class="string">behavior/design/architecture</span></span><br><span class="line"></span><br><span class="line"><span class="attr">no:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">feature</span> <span class="string">additions</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">implicit</span> <span class="string">optimizations</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">unrelated</span> <span class="string">changes</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">new</span> <span class="string">packages</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">architecture/pattern</span> <span class="string">changes</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">large</span> <span class="string">refactors</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">style</span> <span class="string">mixing</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">unnecessary</span> <span class="string">docs/formatting</span> <span class="string">changes</span></span><br><span class="line"></span><br><span class="line"><span class="attr">coding:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">minimal,</span> <span class="string">readable,</span> <span class="string">consistent</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">follow</span> <span class="string">existing</span> <span class="string">style/naming/structure</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">avoid</span> <span class="string">magic</span> <span class="string">values</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">use</span> <span class="string">explicit</span> <span class="string">types</span> <span class="string">when</span> <span class="string">helpful</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">guard</span> <span class="string">invalid</span> <span class="string">input</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">do</span> <span class="string">not</span> <span class="string">swallow</span> <span class="string">exceptions</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">avoid</span> <span class="string">LINQ</span> <span class="string">side</span> <span class="string">effects</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">async</span> <span class="string">only</span> <span class="string">when</span> <span class="string">required;</span> <span class="literal">no</span> <span class="string">blocking</span> <span class="string">async</span></span><br><span class="line"></span><br><span class="line"><span class="attr">precondition:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">understand</span> <span class="string">context</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">use</span> <span class="string">MCP</span> <span class="string">first</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">identify</span> <span class="string">impacted</span> <span class="string">symbols/files</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">preserve</span> <span class="string">behavior/design</span></span><br><span class="line"></span><br><span class="line"><span class="attr">testing:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">none</span> <span class="string">unless</span> <span class="string">requested</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">validate</span> <span class="string">logic</span> <span class="string">only</span></span><br><span class="line"></span><br><span class="line"><span class="attr">output:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">concise,</span> <span class="string">structured</span></span><br><span class="line">  <span class="bullet">-</span> <span class="literal">no</span> <span class="string">unnecessary</span> <span class="string">explanation</span></span><br><span class="line">  <span class="bullet">-</span> <span class="literal">no</span> <span class="string">extra</span> <span class="string">suggestions</span> <span class="string">unless</span> <span class="string">useful</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">list</span> <span class="string">changed</span> <span class="string">files</span> <span class="string">only</span> <span class="string">when</span> <span class="string">implementation</span> <span class="string">occurs</span></span><br><span class="line"></span><br><span class="line"><span class="attr">suggestion:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">separate</span> <span class="string">section</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">not</span> <span class="string">implemented</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="8-驗證-Checklist">8. 驗證 Checklist</h2>
+<h3 id="8-1-安裝檢查">8.1 安裝檢查</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">node <span class="literal">-v</span></span><br><span class="line">npm <span class="literal">-v</span></span><br><span class="line">codegraph <span class="literal">--version</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="8-2-專案檢查">8.2 專案檢查</h3>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> C:\Source\YourProject</span><br><span class="line">codegraph status</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="8-3-MCP-設定檢查">8.3 MCP 設定檢查</h3>
+<p>確認存在：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.vscode/mcp.json</span><br></pre></td></tr></table></figure>
+<p>內容：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;servers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;codegraph&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stdio&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;codegraph&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;serve&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--mcp&quot;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="9-疑難排解">9. 疑難排解</h2>
+<h3 id="9-1-codegraph-不是內部或外部命令">9.1 <code>codegraph</code> 不是內部或外部命令</h3>
+<p>確認 npm global path：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config get prefix</span><br></pre></td></tr></table></figure>
+<p>重新開啟 PowerShell / VS Code。</p>
+<hr>
+<h3 id="9-2-Copilot-沒有使用-CodeGraph">9.2 Copilot 沒有使用 CodeGraph</h3>
+<p>檢查：</p>
+<ul>
+<li><code>.vscode/mcp.json</code> 是否在 workspace 中</li>
+<li>VS Code 是否重新啟動</li>
+<li>MCP server 是否顯示在 Copilot MCP 工具清單</li>
+<li><code>.github/copilot-instructions.md</code> 是否位於 repo 正確位置</li>
+<li>Prompt 是否明確寫 <code>Use CodeGraph MCP first</code></li>
+</ul>
+<hr>
+<h3 id="9-3-CodeGraph-結果不完整">9.3 CodeGraph 結果不完整</h3>
+<p>執行：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">codegraph status</span><br><span class="line">codegraph index <span class="literal">--force</span></span><br></pre></td></tr></table></figure>
+<p>必要時重新初始化：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">codegraph uninit</span><br><span class="line">codegraph init</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="10-建議-Repo-結構">10. 建議 Repo 結構</h2>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">your-repo/</span><br><span class="line">  .github/</span><br><span class="line">    copilot-instructions.md</span><br><span class="line">  .vscode/</span><br><span class="line">    mcp.json</span><br><span class="line">  .codegraph/</span><br><span class="line">  src/</span><br><span class="line">  tests/</span><br></pre></td></tr></table></figure>
+<p>說明：</p>
+<ul>
+<li><code>.github/copilot-instructions.md</code>：控制 Copilot Agent 工作方式</li>
+<li><code>.vscode/mcp.json</code>：讓 VS Code / Copilot 載入 CodeGraph MCP</li>
+<li><code>.codegraph/</code>：CodeGraph 專案索引，不建議手動修改</li>
+</ul>
+<hr>
+<h2 id="11-最終建議">11. 最終建議</h2>
+<p>你的目標不是單純「讓 Copilot 知道 CodeGraph 存在」，而是建立這種工作流：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CodeGraph MCP</span><br><span class="line">  ↓</span><br><span class="line">Symbol / Caller / Callee</span><br><span class="line">  ↓</span><br><span class="line">Impact Analysis</span><br><span class="line">  ↓</span><br><span class="line">Read affected files only</span><br><span class="line">  ↓</span><br><span class="line">Minimal Change</span><br></pre></td></tr></table></figure>
+<p>避免這種工作流：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Glob</span><br><span class="line">  ↓</span><br><span class="line">Grep</span><br><span class="line">  ↓</span><br><span class="line">Read many files</span><br><span class="line">  ↓</span><br><span class="line">Infer architecture</span><br><span class="line">  ↓</span><br><span class="line">Modify</span><br></pre></td></tr></table></figure>
+<p>因此最重要的是：</p>
+<ol>
+<li><code>.vscode/mcp.json</code> 要設定好</li>
+<li>每個 repo 都要 <code>codegraph init</code></li>
+<li><code>.github/copilot-instructions.md</code> 要放在最上層</li>
+<li>Prompt 仍可補一句 <code>Use CodeGraph MCP first</code></li>
+<li>不期待 100% 強制，但可以大幅提高 Copilot 優先使用 CodeGraph 的機率</li>
+</ol>
+<hr>
+<h2 id="12-參考來源">12. 參考來源</h2>
+<ul>
+<li>Installation | codegraph：官方安裝流程、Agent 設定、<code>codegraph init</code>、重新啟動 Agent、解除安裝說明。 <a target="_blank" rel="noopener" href="https://colbymchenry.github.io/codegraph/getting-started/installation/">[colbymchen…github.io]</a></li>
+<li>CodeGraph完整安装与使用指南 - CSDN博客：npm 安裝、MCP 設定、<code>query / callers / callees / impact</code>、索引更新指令。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/hai4321/article/details/161821396">[blog.csdn.net]</a></li>
+<li>CodeGraph — 代码知识图谱：安装、配置与深度使用指南-CSDN博客：npm / npx / install 指令與 <code>status</code> 驗證說明。 <a target="_blank" rel="noopener" href="https://blog.csdn.net/G_whang/article/details/161948958">[blog.csdn.net]</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Github-Copilot-CodeGraph-MCP/" rel="tag"># Github Copilot, CodeGraph, MCP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/27/FigmaMCPVSCodeCopilot/" rel="prev" title="VSCode x Figma MCP x GitHub Copilot 教學">
+                  <i class="fa fa-angle-left"></i> VSCode x Figma MCP x GitHub Copilot 教學
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">CJ</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

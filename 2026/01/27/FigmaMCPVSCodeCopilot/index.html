@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chengjhe.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.28.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"找到 ${hits} 個搜索結果（用時 ${time} 毫秒）","hits":"找到 ${hits} 個搜索結果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="如何在 VSCode 中整合 Figma MCP 與 GitHub Copilot 本教學說明如何在 Visual Studio Code (VSCode) 中結合 Figma MCP（Model Context Protocol）與 GitHub Copilot，實現設計稿與程式碼的高效協作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VSCode x Figma MCP x GitHub Copilot 教學">
+<meta property="og:url" content="https://chengjhe.github.io/2026/01/27/FigmaMCPVSCodeCopilot/index.html">
+<meta property="og:site_name" content="CJ&#39;s Blog">
+<meta property="og:description" content="如何在 VSCode 中整合 Figma MCP 與 GitHub Copilot 本教學說明如何在 Visual Studio Code (VSCode) 中結合 Figma MCP（Model Context Protocol）與 GitHub Copilot，實現設計稿與程式碼的高效協作。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://thumbs2.imgbox.com/6c/fa/85AAUalh_t.png">
+<meta property="article:published_time" content="2026-01-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-07-03T03:04:53.071Z">
+<meta property="article:author" content="CJ">
+<meta property="article:tag" content="GitHub Copilot, Figma, MCP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://thumbs2.imgbox.com/6c/fa/85AAUalh_t.png">
+
+
+<link rel="canonical" href="https://chengjhe.github.io/2026/01/27/FigmaMCPVSCodeCopilot/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-TW","comments":true,"permalink":"https://chengjhe.github.io/2026/01/27/FigmaMCPVSCodeCopilot/","path":"2026/01/27/FigmaMCPVSCodeCopilot/","title":"VSCode x Figma MCP x GitHub Copilot 教學"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>VSCode x Figma MCP x GitHub Copilot 教學 | CJ's Blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">CJ's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">如何在 VSCode 中整合 Figma MCP 與 GitHub Copilot</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%99%E5%AD%B8%E7%9B%AE%E6%A8%99"><span class="nav-number">1.1.</span> <span class="nav-text">教學目標</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Figma-MCP-%E7%B0%A1%E4%BB%8B"><span class="nav-number">1.2.</span> <span class="nav-text">Figma MCP 簡介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E9%9C%80%E6%B1%82"><span class="nav-number">1.3.</span> <span class="nav-text">前置需求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%A9%9F-1%EF%BC%9A%E7%94%A2%E7%94%9F-Figma-Access-Token"><span class="nav-number">1.4.</span> <span class="nav-text">步驟 1：產生 Figma Access Token</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%A9%9F-2%EF%BC%9A%E6%96%BC-VSCode-%E8%A8%AD%E5%AE%9A-MCP-Server"><span class="nav-number">1.5.</span> <span class="nav-text">步驟 2：於 VSCode 設定 MCP Server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%A9%9F-3%EF%BC%9A%E9%A9%97%E8%AD%89-Figma-MCP-%E8%A8%AD%E5%AE%9A"><span class="nav-number">1.6.</span> <span class="nav-text">步驟 3：驗證 Figma MCP 設定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%A9%9F-4%EF%BC%9AAgent-Mode-%E5%AF%A6%E4%BD%9C"><span class="nav-number">1.7.</span> <span class="nav-text">步驟 4：Agent Mode 實作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Copilot-%E6%8F%90%E7%A4%BA%E8%AA%9E%E7%AF%84%E4%BE%8B"><span class="nav-number">1.8.</span> <span class="nav-text">Copilot 提示語範例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A0%90%E6%9C%9F%E6%88%90%E6%95%88"><span class="nav-number">1.9.</span> <span class="nav-text">預期成效</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">CJ</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分類</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">標籤</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-TW">
+    <link itemprop="mainEntityOfPage" href="https://chengjhe.github.io/2026/01/27/FigmaMCPVSCodeCopilot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="CJ">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CJ's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="VSCode x Figma MCP x GitHub Copilot 教學 | CJ's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VSCode x Figma MCP x GitHub Copilot 教學
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2026-01-27 00:00:00" itemprop="dateCreated datePublished" datetime="2026-01-27T00:00:00+08:00">2026-01-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新於</span>
+      <time title="修改時間：2026-07-03 11:04:53" itemprop="dateModified" datetime="2026-07-03T11:04:53+08:00">2026-07-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Technical-documents/" itemprop="url" rel="index"><span itemprop="name">Technical documents</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Technical-documents/GitHub-Copilot/" itemprop="url" rel="index"><span itemprop="name">GitHub Copilot</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><img src="https://thumbs2.imgbox.com/6c/fa/85AAUalh_t.png" class="" width="500">
+<h1>如何在 VSCode 中整合 Figma MCP 與 GitHub Copilot</h1>
+<p>本教學說明如何在 Visual Studio Code (VSCode) 中結合 Figma MCP（Model Context Protocol）與 GitHub Copilot，實現設計稿與程式碼的高效協作。</p>
+<span id="more"></span>
+<h2 id="教學目標">教學目標</h2>
+<p>本教學將帶領您了解：</p>
+<ul>
+<li>Figma MCP 的功能與應用</li>
+<li>如何讓 Copilot 讀取設計稿並自動產生程式碼</li>
+<li>如何設定 <code>.mcp</code> 檔案以啟動 MCP 伺服器</li>
+<li>運用 Agent Mode 提升 Copilot 的 UI 生成能力</li>
+<li>實用的 Copilot 提示語範例</li>
+</ul>
+<h2 id="Figma-MCP-簡介">Figma MCP 簡介</h2>
+<p>Figma MCP（Model Context Protocol）是一項協議，能讓 GitHub Copilot 直接存取 Figma 設計資料（如元件、屬性、佈局等），協助開發者根據設計稿自動產生對應的程式碼。只需貼上 Figma 的 frame 或 layer 連結，Copilot 即可取得設計細節，提升前端開發效率。</p>
+<h2 id="前置需求">前置需求</h2>
+<table>
+<thead>
+<tr>
+<th>軟體/服務</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VSCode</td>
+<td>請安裝最新版，並啟用 GitHub Copilot Chat 擴充功能</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>用於執行 MCP server，請確認已安裝</td>
+</tr>
+<tr>
+<td>Figma Access Token</td>
+<td>需申請 Figma API 金鑰以存取設計資料</td>
+</tr>
+<tr>
+<td>Copilot MCP 功能</td>
+<td>請於 Copilot 設定中啟用 MCP 功能</td>
+</tr>
+</tbody>
+</table>
+<h2 id="步驟-1：產生-Figma-Access-Token">步驟 1：產生 Figma Access Token</h2>
+<ol>
+<li>登入 Figma，進入 Settings → Account</li>
+<li>點選「Generate Personal Access Token」產生金鑰</li>
+<li>請妥善保存此金鑰，勿外洩</li>
+</ol>
+<h2 id="步驟-2：於-VSCode-設定-MCP-Server">步驟 2：於 VSCode 設定 MCP Server</h2>
+<p>請於專案目錄下建立 <code>.vscode/mcp.json</code>，範例如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;inputs&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;promptString&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;figma-key&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Figma API Key&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;password&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;servers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;figma&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;stdio&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;npx&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;-y&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;figma-developer-mcp&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--figma-api-key&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;$&#123;input:figma-key&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--stdio&quot;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>若 Node.js 版本較舊，請於 <code>args</code> 增加 <code>--node-options=--experimental-fetch</code> 參數，例如：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;servers&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;Framelink Figma MCP&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;cmd&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;args&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;/c&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;npx&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;-y&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--node-options=--experimental-fetch&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;figma-developer-mcp&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--figma-api-key=FIGMA_KEY&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;--stdio&quot;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="步驟-3：驗證-Figma-MCP-設定">步驟 3：驗證 Figma MCP 設定</h2>
+<ol>
+<li>儲存 <code>.mcp</code> 設定檔</li>
+<li>重新啟動 VSCode 以載入 MCP 設定</li>
+<li>於 Copilot Chat 右上角設定中，確認 MCP Server – Figma 已啟用</li>
+<li>MCP 服務可手動啟動、停止或重啟</li>
+</ol>
+<h2 id="步驟-4：Agent-Mode-實作">步驟 4：Agent Mode 實作</h2>
+<ol>
+<li>於 Figma 右鍵選取區塊，複製 selection 連結</li>
+<li>於 Copilot Chat 輸入提示語並貼上連結</li>
+<li>Copilot 會自動解析 node-id，MCP server 取得設計資料</li>
+<li>Copilot 根據設計自動產生 UI 程式碼</li>
+</ol>
+<h2 id="Copilot-提示語範例">Copilot 提示語範例</h2>
+<p><strong>簡單：產生 UI 元件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">這是 Figma frame: https://www.figma.com/design/xxx/xxx?node-id=xxx&amp;p=f&amp;t=xxx</span><br><span class="line">請產生符合此畫面的 Vue 元件，包含佈局、間距、字型大小。</span><br></pre></td></tr></table></figure>
+<p><strong>進階：產生 UI 元件</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">根據這個 Figma 設計連結產生 Vue 元件： https://www.figma.com/design/xxx/xxx?node-id=xxx&amp;p=f&amp;t=xxx</span><br><span class="line"></span><br><span class="line">請遵循以下最佳實踐：</span><br><span class="line">- 使用 TypeScript 的函式型 Vue</span><br><span class="line">- 遵循設計系統（元件、間距、字體）</span><br><span class="line">- 使用 Flex 或 CSS Grid 實現響應式</span><br><span class="line">- 使用語意化 HTML</span><br><span class="line">- 重複元素請抽成可重用元件</span><br><span class="line">- 命名清晰、易維護</span><br><span class="line"></span><br><span class="line">輸出格式：</span><br><span class="line">1. 元件資料夾結構</span><br><span class="line">2. Vue + TypeScript 程式碼</span><br><span class="line">3. 設計決策說明</span><br></pre></td></tr></table></figure>
+<h2 id="預期成效">預期成效</h2>
+<ul>
+<li>可於 VSCode 直接取得 Figma 設計細節，提升協作效率</li>
+<li>Copilot 可自動協助設計轉換為程式碼</li>
+<li>UI 生成流程更為迅速與精確</li>
+<li>促進工程師與設計師間的合作</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GitHub-Copilot-Figma-MCP/" rel="tag"># GitHub Copilot, Figma, MCP</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/05/23/CSharp-UseDataTableToRecordRowChangedData/" rel="prev" title="如何取得DataTable Row的異動狀態與資料 ?">
+                  <i class="fa fa-angle-left"></i> 如何取得DataTable Row的異動狀態與資料 ?
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/07/03/CodegraphMCP_GithubCopilot/" rel="next" title="VSCode x CodeGraph MCP x Github Copilot 教學">
+                  VSCode x CodeGraph MCP x Github Copilot 教學 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">CJ</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 強力驅動
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
